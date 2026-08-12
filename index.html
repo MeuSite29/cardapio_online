@@ -990,7 +990,24 @@
       <input class="cart-input" id="custPhone" type="tel" placeholder="(11) 91234-5678">
 
       <label class="cart-label" for="custAddress">Endereço para entrega</label>
-      <textarea class="cart-input" id="custAddress" placeholder="Rua, número, bairro, referência" rows="2" required></textarea>
+      <textarea class="cart-input" id="custAddress" placeholder="Rua, bairro, referência" rows="2" required></textarea>
+
+      <label class="cart-label" for="custResidenceType">Tipo de moradia</label>
+      <select class="cart-input" id="custResidenceType" required>
+        <option value="" disabled selected>Selecione...</option>
+        <option value="casa">Casa</option>
+        <option value="apartamento">Apartamento</option>
+      </select>
+
+      <div id="custNumberWrap" style="display:none;">
+        <label class="cart-label" id="custNumberLabel" for="custNumber">Número</label>
+        <input class="cart-input" id="custNumber" type="text" placeholder="">
+      </div>
+
+      <div id="custComplementWrap" style="display:none;">
+        <label class="cart-label" for="custComplement">Bloco / Andar (opcional)</label>
+        <input class="cart-input" id="custComplement" type="text" placeholder="Ex: Bloco B, 4º andar">
+      </div>
 
       <label class="cart-label" for="custNotes">Observações (opcional)</label>
       <textarea class="cart-input" id="custNotes" placeholder="Ex: sem casquinha de chocolate, trocar recheio..." rows="2"></textarea>
@@ -1104,10 +1121,19 @@
       const nameEl = document.getElementById('custName');
       const phoneEl = document.getElementById('custPhone');
       const addressEl = document.getElementById('custAddress');
+      const residenceTypeEl = document.getElementById('custResidenceType');
+      const numberEl = document.getElementById('custNumber');
+      const complementEl = document.getElementById('custComplement');
       const p = window.__customerProfile;
       if(nameEl && !nameEl.value) nameEl.value = p.name || '';
       if(phoneEl && !phoneEl.value) phoneEl.value = p.phone || '';
       if(addressEl && !addressEl.value) addressEl.value = p.address || '';
+      if(residenceTypeEl && !residenceTypeEl.value){
+        residenceTypeEl.value = p.residenceType || '';
+        residenceTypeEl.dispatchEvent(new Event('change'));
+      }
+      if(numberEl && !numberEl.value) numberEl.value = p.number || '';
+      if(complementEl && !complementEl.value) complementEl.value = p.complement || '';
     }
   }
 
@@ -1118,6 +1144,32 @@
   }
 
   cartFab.addEventListener('click', openCart);
+
+  const custResidenceType = document.getElementById('custResidenceType');
+  const custNumberWrap = document.getElementById('custNumberWrap');
+  const custNumberLabel = document.getElementById('custNumberLabel');
+  const custNumber = document.getElementById('custNumber');
+  const custComplementWrap = document.getElementById('custComplementWrap');
+
+  custResidenceType.addEventListener('change', () => {
+    if(custResidenceType.value === 'casa'){
+      custNumberWrap.style.display = 'block';
+      custNumberLabel.textContent = 'Número da casa';
+      custNumber.placeholder = 'Ex: 123';
+      custNumber.required = true;
+      custComplementWrap.style.display = 'none';
+    } else if(custResidenceType.value === 'apartamento'){
+      custNumberWrap.style.display = 'block';
+      custNumberLabel.textContent = 'Número do apartamento';
+      custNumber.placeholder = 'Ex: 45';
+      custNumber.required = true;
+      custComplementWrap.style.display = 'block';
+    } else {
+      custNumberWrap.style.display = 'none';
+      custComplementWrap.style.display = 'none';
+      custNumber.required = false;
+    }
+  });
   cartClose.addEventListener('click', closeCart);
   cartOverlay.addEventListener('click', closeCart);
 
@@ -1137,10 +1189,13 @@
     const name = document.getElementById('custName').value.trim();
     const phone = document.getElementById('custPhone').value.trim();
     const address = document.getElementById('custAddress').value.trim();
+    const residenceType = document.getElementById('custResidenceType').value;
+    const number = document.getElementById('custNumber').value.trim();
+    const complement = document.getElementById('custComplement').value.trim();
     const notes = document.getElementById('custNotes').value.trim();
 
-    if(!name || !address){
-      alert('Preencha seu nome e o endereço para entrega.');
+    if(!name || !address || !residenceType || !number){
+      alert('Preencha seu nome, o endereço, o tipo de moradia e o número para entrega.');
       return;
     }
 
@@ -1151,12 +1206,17 @@
       return `${item.qty}x ${itemName} — ${formatPrice(lineTotal)}`;
     });
 
+    const residenceLabel = residenceType === 'casa' ? 'Casa' : 'Apartamento';
+
     let message = 'Olá! Gostaria de fazer o seguinte pedido:\n\n';
     message += lines.join('\n');
     message += `\n\nTotal: ${formatPrice(total)}`;
     message += `\n\nNome: ${name}`;
     if(phone) message += `\nTelefone: ${phone}`;
     message += `\nEndereço: ${address}`;
+    message += `\nTipo de moradia: ${residenceLabel}`;
+    message += `\nNúmero: ${number}`;
+    if(complement) message += `\nBloco/Andar: ${complement}`;
     if(notes) message += `\nObservações: ${notes}`;
 
     const url = `https://wa.me/${CART_PHONE}?text=${encodeURIComponent(message)}`;

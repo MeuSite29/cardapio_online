@@ -87,7 +87,7 @@
 
   label{ font-size:0.8rem; font-weight:700; color:var(--chocolate-suave); }
 
-  input{
+  input, select{
     width:100%;
     font-family:'Plus Jakarta Sans', sans-serif;
     font-size:0.94rem;
@@ -97,7 +97,7 @@
     background:var(--creme-2);
     color:var(--chocolate);
   }
-  input:focus{ outline:none; border-color:var(--framboesa); }
+  input:focus, select:focus{ outline:none; border-color:var(--framboesa); }
 
   .btn{
     width:100%;
@@ -253,7 +253,23 @@
       </div>
       <div>
         <label for="pAddress">Endereço de entrega</label>
-        <input id="pAddress" type="text" placeholder="Rua, número, bairro">
+        <input id="pAddress" type="text" placeholder="Rua, bairro">
+      </div>
+      <div>
+        <label for="pResidenceType">Tipo de moradia</label>
+        <select id="pResidenceType" required>
+          <option value="" disabled selected>Selecione...</option>
+          <option value="casa">Casa</option>
+          <option value="apartamento">Apartamento</option>
+        </select>
+      </div>
+      <div id="pNumberWrap" style="display:none;">
+        <label id="pNumberLabel" for="pNumber">Número</label>
+        <input id="pNumber" type="text" placeholder="">
+      </div>
+      <div id="pComplementWrap" style="display:none;">
+        <label for="pComplement">Bloco / Andar (opcional)</label>
+        <input id="pComplement" type="text" placeholder="Ex: Bloco B, 4º andar">
       </div>
       <button type="submit" class="btn btn-primary">Salvar dados</button>
     </form>
@@ -289,6 +305,31 @@
 
   const profileForm = document.getElementById('profileForm');
   const profileMsg = document.getElementById('profileMsg');
+  const pResidenceType = document.getElementById('pResidenceType');
+  const pNumberWrap = document.getElementById('pNumberWrap');
+  const pNumberLabel = document.getElementById('pNumberLabel');
+  const pNumber = document.getElementById('pNumber');
+  const pComplementWrap = document.getElementById('pComplementWrap');
+
+  pResidenceType.addEventListener('change', () => {
+    if(pResidenceType.value === 'casa'){
+      pNumberWrap.style.display = 'block';
+      pNumberLabel.textContent = 'Número da casa';
+      pNumber.placeholder = 'Ex: 123';
+      pNumber.required = true;
+      pComplementWrap.style.display = 'none';
+    } else if(pResidenceType.value === 'apartamento'){
+      pNumberWrap.style.display = 'block';
+      pNumberLabel.textContent = 'Número do apartamento';
+      pNumber.placeholder = 'Ex: 45';
+      pNumber.required = true;
+      pComplementWrap.style.display = 'block';
+    } else {
+      pNumberWrap.style.display = 'none';
+      pComplementWrap.style.display = 'none';
+      pNumber.required = false;
+    }
+  });
   const profileName = document.getElementById('profileName');
   const profileEmail = document.getElementById('profileEmail');
   const avatar = document.getElementById('avatar');
@@ -375,6 +416,9 @@
       name: document.getElementById('pName').value.trim(),
       phone: document.getElementById('pPhone').value.trim(),
       address: document.getElementById('pAddress').value.trim(),
+      residenceType: document.getElementById('pResidenceType').value,
+      number: document.getElementById('pNumber').value.trim(),
+      complement: document.getElementById('pComplement').value.trim(),
       email: user.email || null,
       updatedAt: new Date().toISOString()
     };
@@ -413,6 +457,10 @@
           document.getElementById('pName').value = data.name || user.displayName || '';
           document.getElementById('pPhone').value = data.phone || '';
           document.getElementById('pAddress').value = data.address || '';
+          document.getElementById('pResidenceType').value = data.residenceType || '';
+          document.getElementById('pNumber').value = data.number || '';
+          document.getElementById('pComplement').value = data.complement || '';
+          pResidenceType.dispatchEvent(new Event('change'));
         } else if(user.displayName){
           document.getElementById('pName').value = user.displayName;
         }
