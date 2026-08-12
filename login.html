@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amora & Mel — Entrar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --creme:#FFF6ED;
+    --creme-2:#FFFDF9;
+    --framboesa:#D6336C;
+    --framboesa-escura:#A82256;
+    --pessego:#FF9776;
+    --pistache:#7FB69A;
+    --pistache-clara:#DCEEE3;
+    --manteiga:#F4B942;
+    --chocolate:#3B2A2A;
+    --chocolate-suave:#6B5555;
+    --branco:#ffffff;
+    --erro:#D6336C;
+    --sombra: 0 10px 30px -12px rgba(59,42,42,0.18);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  body{
+    min-height:100vh;
+    background:var(--creme);
+    color:var(--chocolate);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1, h2, .display{ font-family:'Fraunces', serif; letter-spacing:-0.01em; }
+
+  .card{
+    width:100%;
+    max-width:400px;
+    background:var(--branco);
+    border-radius:24px;
+    padding:32px 28px;
+    box-shadow:var(--sombra);
+  }
+
+  .brand{ text-align:center; margin-bottom:22px; }
+  .brand-mark{
+    width:44px; height:44px;
+    border-radius:50%;
+    margin:0 auto 12px;
+    background:conic-gradient(from 180deg, var(--framboesa), var(--pessego), var(--manteiga), var(--pistache), var(--framboesa));
+  }
+  .brand h1{ font-size:1.5rem; color:var(--framboesa-escura); font-weight:600; }
+  .brand p{ font-size:0.85rem; color:var(--chocolate-suave); margin-top:4px; }
+
+  /* ---------- Alternância Entrar / Criar conta ---------- */
+  .tabs{
+    display:flex;
+    background:var(--creme);
+    border-radius:999px;
+    padding:4px;
+    margin-bottom:20px;
+  }
+  .tab{
+    flex:1;
+    text-align:center;
+    padding:9px 0;
+    border-radius:999px;
+    border:none;
+    background:transparent;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight:700;
+    font-size:0.85rem;
+    color:var(--chocolate-suave);
+    cursor:pointer;
+    -webkit-appearance:none;
+  }
+  .tab.active{ background:var(--framboesa); color:#fff; }
+
+  form{ display:flex; flex-direction:column; gap:12px; }
+
+  label{ font-size:0.8rem; font-weight:700; color:var(--chocolate-suave); }
+
+  input{
+    width:100%;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:0.94rem;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1.5px solid rgba(59,42,42,0.14);
+    background:var(--creme-2);
+    color:var(--chocolate);
+  }
+  input:focus{ outline:none; border-color:var(--framboesa); }
+
+  .btn{
+    width:100%;
+    margin-top:6px;
+    border:none;
+    border-radius:999px;
+    padding:13px;
+    font-weight:700;
+    font-size:0.92rem;
+    cursor:pointer;
+    -webkit-appearance:none;
+  }
+  .btn-primary{ background:var(--framboesa); color:#fff; }
+  .btn-primary:hover{ background:var(--framboesa-escura); }
+  .btn-primary:disabled{ opacity:0.6; cursor:default; }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:18px 0;
+    color:var(--chocolate-suave);
+    font-size:0.78rem;
+  }
+  .divider::before, .divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:rgba(59,42,42,0.12);
+  }
+
+  .btn-google{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:var(--branco);
+    color:var(--chocolate);
+    border:1.5px solid rgba(59,42,42,0.14);
+  }
+  .btn-google:hover{ background:var(--creme); }
+  .btn-google svg{ width:18px; height:18px; }
+
+  .msg{
+    font-size:0.82rem;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-top:6px;
+    display:none;
+  }
+  .msg.show{ display:block; }
+  .msg.err{ background:#FDE8EE; color:var(--erro); }
+  .msg.ok{ background:var(--pistache-clara); color:#2F6B4F; }
+
+  /* ---------- Painel do perfil (pós-login) ---------- */
+  #profileView{ display:none; }
+  .profile-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .avatar{
+    width:46px; height:46px;
+    border-radius:50%;
+    background:var(--pistache-clara);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.3rem;
+    flex-shrink:0;
+    overflow:hidden;
+  }
+  .avatar img{ width:100%; height:100%; object-fit:cover; }
+  .profile-head-text{ min-width:0; }
+  .profile-head-text .who{ font-weight:700; font-size:0.95rem; }
+  .profile-head-text .email{ font-size:0.78rem; color:var(--chocolate-suave); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--chocolate-suave);
+    border:1.5px solid rgba(59,42,42,0.14);
+    font-weight:700;
+  }
+  .btn-ghost:hover{ background:var(--creme); }
+
+  .hint{ font-size:0.78rem; color:var(--chocolate-suave); margin-top:14px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <h1>Amora & Mel</h1>
+    <p>Entre para salvar seus dados e agilizar seus pedidos</p>
+  </div>
+
+  <!-- ---------- Tela de login / cadastro ---------- -->
+  <div id="authView">
+    <div class="tabs">
+      <button class="tab active" id="tabLogin" type="button">Entrar</button>
+      <button class="tab" id="tabSignup" type="button">Criar conta</button>
+    </div>
+
+    <div id="authMsg" class="msg"></div>
+
+    <form id="authForm">
+      <div>
+        <label for="authEmail">E-mail</label>
+        <input id="authEmail" type="email" placeholder="seu@email.com" required>
+      </div>
+      <div>
+        <label for="authPassword">Senha</label>
+        <input id="authPassword" type="password" placeholder="••••••••" minlength="6" required>
+      </div>
+      <div id="confirmPasswordWrap" style="display:none;">
+        <label for="authConfirmPassword">Confirmar senha</label>
+        <input id="authConfirmPassword" type="password" placeholder="••••••••" minlength="6">
+      </div>
+      <button type="submit" class="btn btn-primary" id="authSubmit">Entrar</button>
+    </form>
+
+    <div class="divider">ou</div>
+
+    <button class="btn btn-google" id="googleBtn" type="button">
+      <svg viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.85.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.95v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.72A5.4 5.4 0 0 1 3.69 9c0-.6.1-1.18.28-1.72V4.95H.95A9 9 0 0 0 0 9c0 1.45.35 2.83.95 4.05l3.02-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .95 4.95l3.02 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+      Continuar com Google
+    </button>
+  </div>
+
+  <!-- ---------- Tela de perfil (logado) ---------- -->
+  <div id="profileView">
+    <div class="profile-head">
+      <div class="avatar" id="avatar">🙂</div>
+      <div class="profile-head-text">
+        <div class="who" id="profileName">—</div>
+        <div class="email" id="profileEmail">—</div>
+      </div>
+    </div>
+
+    <div id="profileMsg" class="msg"></div>
+
+    <form id="profileForm">
+      <div>
+        <label for="pName">Nome completo</label>
+        <input id="pName" type="text" placeholder="Seu nome" required>
+      </div>
+      <div>
+        <label for="pPhone">Telefone</label>
+        <input id="pPhone" type="tel" placeholder="(11) 91234-5678">
+      </div>
+      <div>
+        <label for="pAddress">Endereço de entrega</label>
+        <input id="pAddress" type="text" placeholder="Rua, número, bairro">
+      </div>
+      <button type="submit" class="btn btn-primary">Salvar dados</button>
+    </form>
+
+    <button class="btn btn-ghost" id="logoutBtn" type="button" style="margin-top:10px;">Sair da conta</button>
+  </div>
+
+  <p class="hint">Seus dados ficam salvos com segurança para os próximos pedidos.</p>
+</div>
+
+<script type="module">
+  import { GoogleAuthProvider, signInWithPopup,
+    createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { auth, db } from "./firebase-config.js";
+
+  const googleProvider = new GoogleAuthProvider();
+
+  // ---------- Elementos ----------
+  const authView = document.getElementById('authView');
+  const profileView = document.getElementById('profileView');
+
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  const authForm = document.getElementById('authForm');
+  const authSubmit = document.getElementById('authSubmit');
+  const authMsg = document.getElementById('authMsg');
+  const googleBtn = document.getElementById('googleBtn');
+  const confirmPasswordWrap = document.getElementById('confirmPasswordWrap');
+  const authConfirmPassword = document.getElementById('authConfirmPassword');
+
+  const profileForm = document.getElementById('profileForm');
+  const profileMsg = document.getElementById('profileMsg');
+  const profileName = document.getElementById('profileName');
+  const profileEmail = document.getElementById('profileEmail');
+  const avatar = document.getElementById('avatar');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  let mode = 'login'; // 'login' | 'signup'
+
+  function showMsg(el, text, type){
+    el.textContent = text;
+    el.className = 'msg show ' + type;
+  }
+  function clearMsg(el){
+    el.className = 'msg';
+  }
+
+  // ---------- Alternar Entrar / Criar conta ----------
+  tabLogin.addEventListener('click', () => {
+    mode = 'login';
+    tabLogin.classList.add('active');
+    tabSignup.classList.remove('active');
+    authSubmit.textContent = 'Entrar';
+    confirmPasswordWrap.style.display = 'none';
+    authConfirmPassword.required = false;
+    authConfirmPassword.value = '';
+    clearMsg(authMsg);
+  });
+  tabSignup.addEventListener('click', () => {
+    mode = 'signup';
+    tabSignup.classList.add('active');
+    tabLogin.classList.remove('active');
+    authSubmit.textContent = 'Criar conta';
+    confirmPasswordWrap.style.display = 'block';
+    authConfirmPassword.required = true;
+    clearMsg(authMsg);
+  });
+
+  // ---------- E-mail / senha ----------
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearMsg(authMsg);
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+
+    if(mode === 'signup' && password !== authConfirmPassword.value){
+      showMsg(authMsg, 'As senhas não coincidem.', 'err');
+      return;
+    }
+
+    authSubmit.disabled = true;
+
+    try{
+      if(mode === 'signup'){
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+    } catch(err){
+      showMsg(authMsg, traduzErro(err.code), 'err');
+    } finally {
+      authSubmit.disabled = false;
+    }
+  });
+
+  // ---------- Google ----------
+  googleBtn.addEventListener('click', async () => {
+    clearMsg(authMsg);
+    try{
+      await signInWithPopup(auth, googleProvider);
+    } catch(err){
+      showMsg(authMsg, traduzErro(err.code), 'err');
+    }
+  });
+
+  // ---------- Sair ----------
+  logoutBtn.addEventListener('click', () => signOut(auth));
+
+  // ---------- Salvar perfil no Firestore ----------
+  profileForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if(!user) return;
+
+    const data = {
+      name: document.getElementById('pName').value.trim(),
+      phone: document.getElementById('pPhone').value.trim(),
+      address: document.getElementById('pAddress').value.trim(),
+      email: user.email || null,
+      updatedAt: new Date().toISOString()
+    };
+
+    try{
+      await setDoc(doc(db, 'customers', user.uid), data, { merge: true });
+      showMsg(profileMsg, 'Dados salvos! ✓', 'ok');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 900);
+    } catch(err){
+      showMsg(profileMsg, 'Não foi possível salvar. Tente novamente.', 'err');
+    }
+  });
+
+  // ---------- Observa login/logout e carrega dados salvos ----------
+  onAuthStateChanged(auth, async (user) => {
+    clearMsg(authMsg);
+    if(user){
+      authView.style.display = 'none';
+      profileView.style.display = 'block';
+
+      profileName.textContent = user.displayName || 'Minha conta';
+      profileEmail.textContent = user.email || '';
+      if(user.photoURL){
+        avatar.innerHTML = `<img src="${user.photoURL}" alt="">`;
+      } else {
+        avatar.textContent = '🙂';
+      }
+
+      // Busca dados salvos anteriormente (nome, telefone, endereço)
+      try{
+        const snap = await getDoc(doc(db, 'customers', user.uid));
+        if(snap.exists()){
+          const data = snap.data();
+          document.getElementById('pName').value = data.name || user.displayName || '';
+          document.getElementById('pPhone').value = data.phone || '';
+          document.getElementById('pAddress').value = data.address || '';
+        } else if(user.displayName){
+          document.getElementById('pName').value = user.displayName;
+        }
+      } catch(err){
+        showMsg(profileMsg, 'Não foi possível carregar seus dados salvos.', 'err');
+      }
+
+    } else {
+      authView.style.display = 'block';
+      profileView.style.display = 'none';
+      authForm.reset();
+    }
+  });
+
+  function traduzErro(code){
+    const mapa = {
+      'auth/invalid-email': 'E-mail inválido.',
+      'auth/user-not-found': 'Não encontramos uma conta com esse e-mail.',
+      'auth/wrong-password': 'Senha incorreta.',
+      'auth/invalid-credential': 'E-mail ou senha incorretos.',
+      'auth/email-already-in-use': 'Já existe uma conta com esse e-mail. Tente entrar.',
+      'auth/weak-password': 'A senha precisa ter pelo menos 6 caracteres.',
+      'auth/popup-closed-by-user': 'Login cancelado.',
+      'auth/network-request-failed': 'Falha de conexão. Verifique sua internet.',
+      'auth/operation-not-allowed': 'Login por e-mail/senha não está ativado no Firebase (Authentication → Sign-in method).',
+      'auth/too-many-requests': 'Muitas tentativas seguidas. Aguarde um momento e tente de novo.',
+      'auth/invalid-api-key': 'As chaves do Firebase em firebase-config.js ainda não foram preenchidas corretamente.'
+    };
+    return mapa[code] || 'Algo deu errado. Tente novamente.';
+  }
+</script>
+
+</body>
+</html>
