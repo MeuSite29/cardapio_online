@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amora & Mel — Entrar</title>
+<title>artcake_cruz — Entrar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Baloo+2:wght@600;700;800&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --creme:#FFF6ED;
@@ -51,12 +51,62 @@
 
   .brand{ text-align:center; margin-bottom:22px; }
   .brand-mark{
-    width:44px; height:44px;
+    width:88px; height:88px;
     border-radius:50%;
+    object-fit:cover;
     margin:0 auto 12px;
-    background:conic-gradient(from 180deg, var(--framboesa), var(--pessego), var(--manteiga), var(--pistache), var(--framboesa));
+    cursor:pointer;
+    transition:transform 0.15s ease;
   }
-  .brand h1{ font-size:1.5rem; color:var(--framboesa-escura); font-weight:600; }
+  .brand-mark:hover{ transform:scale(1.06); }
+
+  .logo-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:200;
+    background:rgba(59,42,42,0.72);
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .logo-modal.show{ display:flex; }
+  .logo-modal img{
+    width:min(320px, 82vw);
+    height:min(320px, 82vw);
+    object-fit:cover;
+    border-radius:50%;
+    box-shadow:0 20px 60px -12px rgba(0,0,0,0.5);
+    background:transparent;
+  }
+  .logo-modal-close{
+    position:absolute;
+    top:20px;
+    right:20px;
+    width:40px; height:40px;
+    border-radius:50%;
+    border:none;
+    background:var(--branco);
+    color:var(--chocolate);
+    font-size:1.1rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .logo-modal-close:hover{ background:var(--creme); }
+  .brandname{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+  }
+  .brandname .script{
+    font-family:'Dancing Script', cursive;
+    font-weight:700;
+    color:var(--framboesa-escura);
+    margin-left:1px;
+  }
+  .brand h1{ font-size:1.7rem; color:var(--chocolate); }
+  .brand h1 .script{ font-size:2rem; }
   .brand p{ font-size:0.85rem; color:var(--chocolate-suave); margin-top:4px; }
 
   /* ---------- Alternância Entrar / Criar conta ---------- */
@@ -192,8 +242,8 @@
 <div class="card">
 
   <div class="brand">
-    <div class="brand-mark"></div>
-    <h1>Amora & Mel</h1>
+    <img src="imagem_logo/logo.png" alt="artcake_cruz" class="brand-mark" id="logoTrigger" title="Ver logo em tamanho maior">
+    <h1 class="brandname">artcake_<span class="script">cruz</span></h1>
     <p>Entre para salvar seus dados e agilizar seus pedidos</p>
   </div>
 
@@ -280,6 +330,11 @@
   <p class="hint">Seus dados ficam salvos com segurança para os próximos pedidos.</p>
 </div>
 
+<div id="logoModal" class="logo-modal">
+  <button class="logo-modal-close" id="logoModalClose" aria-label="Fechar">✕</button>
+  <img src="imagem_logo/logo.png" alt="artcake_cruz" id="logoModalImg">
+</div>
+
 <script type="module">
   import { GoogleAuthProvider, signInWithPopup,
     createUserWithEmailAndPassword, signInWithEmailAndPassword,
@@ -289,6 +344,20 @@
   import { auth, db } from "./firebase-config.js";
 
   const googleProvider = new GoogleAuthProvider();
+
+  // ---------- Modal da logo ----------
+  const logoTrigger = document.getElementById('logoTrigger');
+  const logoModal = document.getElementById('logoModal');
+  const logoModalClose = document.getElementById('logoModalClose');
+
+  logoTrigger.addEventListener('click', () => logoModal.classList.add('show'));
+  logoModalClose.addEventListener('click', () => logoModal.classList.remove('show'));
+  logoModal.addEventListener('click', (e) => {
+    if(e.target === logoModal) logoModal.classList.remove('show');
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') logoModal.classList.remove('show');
+  });
 
   // ---------- Elementos ----------
   const authView = document.getElementById('authView');

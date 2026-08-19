@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amora & Mel — Cardápio</title>
+<title>artcake_cruz — Cardápio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Baloo+2:wght@600;700;800&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --creme:#FFF6ED;
@@ -26,7 +26,7 @@
 
   *{ box-sizing:border-box; margin:0; padding:0; }
 
-  html{ scroll-behavior:smooth; }
+  html{ scroll-behavior:smooth; overflow-x:hidden; }
 
   body{
     background:var(--creme);
@@ -34,6 +34,8 @@
     font-family:'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing:antialiased;
     padding-bottom:90px;
+    overflow-x:hidden;
+    max-width:100vw;
   }
 
   h1,h2,h3, .display{
@@ -57,50 +59,103 @@
   .topbar-inner{
     max-width:1180px;
     margin:0 auto;
-    padding:14px 24px;
+    padding:12px 24px;
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:14px;
   }
   .logo-mark{
-    width:34px; height:34px;
+    width:64px; height:64px;
     border-radius:50%;
-    background:conic-gradient(from 180deg, var(--framboesa), var(--pessego), var(--manteiga), var(--pistache), var(--framboesa));
+    object-fit:cover;
     flex-shrink:0;
-    box-shadow: inset 0 0 0 3px var(--creme-2);
+    cursor:pointer;
+    transition:transform 0.15s ease;
+  }
+  .logo-mark:hover{ transform:scale(1.06); }
+
+  .logo-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:200;
+    background:rgba(59,42,42,0.72);
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .logo-modal.show{ display:flex; }
+  .logo-modal img{
+    width:min(320px, 82vw);
+    height:min(320px, 82vw);
+    object-fit:cover;
+    border-radius:50%;
+    box-shadow:0 20px 60px -12px rgba(0,0,0,0.5);
+    background:transparent;
+  }
+  .logo-modal-close{
+    position:absolute;
+    top:20px;
+    right:20px;
+    width:40px; height:40px;
+    border-radius:50%;
+    border:none;
+    background:var(--branco);
+    color:var(--chocolate);
+    font-size:1.1rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .logo-modal-close:hover{ background:var(--creme); }
+  .brandname{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+  }
+  .brandname .script{
+    font-family:'Dancing Script', cursive;
+    font-weight:700;
+    color:var(--framboesa-escura);
+    margin-left:1px;
   }
   .topbar-name{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size:1.15rem;
-    color:var(--framboesa-escura);
+    font-size:1.3rem;
+    color:var(--chocolate);
+    flex-shrink:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
+  .topbar-name .script{ font-size:1.75rem; }
   .topbar-status{
     margin-left:auto;
-    font-size:0.78rem;
+    font-size:0.92rem;
     font-weight:600;
     color:var(--pistache);
     background:var(--pistache-clara);
-    padding:5px 11px;
+    padding:8px 16px;
     border-radius:999px;
     white-space:nowrap;
+    flex-shrink:0;
   }
   .topbar-status::before{
     content:"";
     display:inline-block;
-    width:6px; height:6px;
+    width:8px; height:8px;
     border-radius:50%;
     background:var(--pistache);
-    margin-right:6px;
+    margin-right:8px;
   }
   .account-link{
-    width:32px; height:32px;
+    width:48px; height:48px;
     border-radius:50%;
     background:var(--branco);
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:0.95rem;
+    font-size:1.4rem;
     box-shadow:var(--sombra);
     flex-shrink:0;
     overflow:hidden;
@@ -152,6 +207,7 @@
     line-height:1.05;
     margin-bottom:14px;
   }
+  .hero h1 .script{ font-size:1.18em; }
   .hero h1 em{
     font-style:italic;
     font-weight:600;
@@ -190,6 +246,68 @@
     width:100%;
     height:22px;
     margin-top:-1px;
+  }
+
+  /* ---------- Banner de promoção de estreia ---------- */
+  .promo-banner{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(120deg, var(--framboesa) 0%, #E8547A 40%, var(--pessego) 100%);
+    border-radius:22px;
+    padding:26px 24px;
+    margin:20px 0 6px;
+    text-align:center;
+    color:#fff;
+    box-shadow:0 16px 34px -16px rgba(214,51,108,0.55);
+  }
+  .promo-badge{
+    display:inline-block;
+    background:rgba(255,255,255,0.22);
+    backdrop-filter:blur(2px);
+    padding:6px 16px;
+    border-radius:999px;
+    font-size:0.75rem;
+    font-weight:800;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    margin-bottom:10px;
+    position:relative;
+    z-index:1;
+  }
+  .promo-title{
+    font-family:'Baloo 2', sans-serif;
+    font-size:1.35rem;
+    font-weight:700;
+    line-height:1.3;
+    margin-bottom:8px;
+    position:relative;
+    z-index:1;
+  }
+  .promo-title strong{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:1.2em;
+    color:var(--manteiga);
+    -webkit-text-stroke:0.5px rgba(59,42,42,0.15);
+    white-space:nowrap;
+  }
+  .promo-sub{
+    font-size:0.82rem;
+    font-weight:600;
+    opacity:0.95;
+    line-height:1.5;
+    max-width:38ch;
+    margin:0 auto;
+    position:relative;
+    z-index:1;
+  }
+  @media (max-width:380px){
+    .promo-banner{ padding:24px 18px; }
+  }
+  @media (min-width:640px){
+    .promo-banner{ padding:32px 40px; }
+    .promo-title{ font-size:1.85rem; }
+    .promo-sub{ font-size:0.95rem; max-width:48ch; }
   }
 
   /* ---------- Navegação de categorias ---------- */
@@ -287,6 +405,13 @@
     position:relative;
     overflow:hidden;
   }
+  .card-art img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    position:relative;
+    z-index:1;
+  }
   .card-art::after{
     content:"";
     position:absolute;
@@ -352,6 +477,21 @@
     box-shadow:0 4px 10px -4px rgba(0,0,0,0.25);
   }
 
+  .tag-mais-pedido{
+    position:absolute;
+    top:-8px;
+    right:14px;
+    background:var(--framboesa);
+    color:#fff;
+    font-size:0.68rem;
+    font-weight:800;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:999px;
+    box-shadow:0 4px 10px -4px rgba(0,0,0,0.25);
+  }
+
   /* ---------- Rodapé ---------- */
   footer{
     max-width:960px;
@@ -365,6 +505,7 @@
     color:var(--framboesa-escura);
     margin-bottom:10px;
   }
+  footer h3 .script{ font-size:1.2em; }
   .footer-info{
     font-size:0.9rem;
     line-height:1.7;
@@ -566,6 +707,18 @@
   }
   .cart-total-row[hidden]{ display:none; }
 
+  .cart-savings-row{
+    background:var(--pistache-clara);
+    color:#2F6B4F;
+    font-size:0.82rem;
+    font-weight:700;
+    padding:9px 12px;
+    border-radius:10px;
+    margin-top:12px;
+    text-align:center;
+  }
+  .cart-savings-row[hidden]{ display:none; }
+
   .cart-form{ display:flex; flex-direction:column; gap:6px; margin-top:14px; }
   .cart-form[hidden]{ display:none; }
   .cart-label{
@@ -586,6 +739,17 @@
   }
   .cart-input:focus{ outline:none; border-color:var(--framboesa); }
 
+  .login-prompt{
+    display:block;
+    text-align:center;
+    margin-top:16px;
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--framboesa);
+    text-decoration:none;
+  }
+  .login-prompt:hover{ text-decoration:underline; }
+
   .cart-submit{
     margin-top:18px;
     background:var(--pistache);
@@ -599,6 +763,11 @@
     -webkit-appearance:none;
   }
   .cart-submit:hover{ background:#6ba589; }
+
+  @media (max-width:480px){
+    .topbar-status{ font-size:0; padding:0; width:14px; height:14px; background:transparent; }
+    .topbar-status::before{ margin-right:0; width:10px; height:10px; }
+  }
 
   @media (min-width:640px){
     .cat-nav{ top:66px; }
@@ -696,8 +865,8 @@
 
 <div class="topbar">
   <div class="topbar-inner">
-    <div class="logo-mark"></div>
-    <span class="topbar-name">Amora & Mel</span>
+    <img src="imagem_logo/logo.png" alt="artcake_cruz" class="logo-mark" id="logoTrigger" title="Ver logo em tamanho maior">
+    <span class="topbar-name brandname">artcake_<span class="script">cruz</span></span>
     <span class="topbar-status">Aberto agora</span>
     <a href="login.html" class="account-link" id="accountLink" title="Entrar / minha conta">👤</a>
   </div>
@@ -707,7 +876,7 @@
   <div class="hero-content">
     <div class="hero-text">
       <span class="hero-eyebrow">Doceria Artesanal</span>
-      <h1>Amora & Mel<em>doces que abraçam</em></h1>
+      <h1><span class="brandname">artcake_<span class="script">cruz</span></span><em>doce em cada detalhe, amor em cada fatia</em></h1>
       <p>Feitos à mão todos os dias, com ingredientes selecionados e muito carinho. Escolha, peça pelo WhatsApp e retire ou receba em casa.</p>
       <div class="hero-info">
         <span class="hero-chip">📍 Rua das Flores, 128 — Centro</span>
@@ -726,64 +895,94 @@
 </svg>
 
 <div class="content-wrap">
+
 <nav class="cat-nav">
   <div class="cat-nav-scroll" id="catNav">
     <button class="cat-pill active" data-target="bolos">🍰 Bolos no Pote</button>
-    <button class="cat-pill" data-target="brownies">🍪 Brownies & Cookies</button>
+    <!-- <button class="cat-pill" data-target="brownies">🍪 Brownies & Cookies</button>
     <button class="cat-pill" data-target="finos">🍬 Doces Finos</button>
-    <button class="cat-pill" data-target="bebidas">🥤 Bebidas Geladas</button>
+    <button class="cat-pill" data-target="bebidas">🥤 Bebidas Geladas</button> -->
   </div>
 </nav>
 
 <main>
+
+  <div id="promoBanners"></div>
 
   <section class="menu-section" id="bolos">
     <div class="section-head">
       <span class="section-emoji">🍰</span>
       <h2>Bolos no Pote</h2>
     </div>
-    <p class="section-sub">Camadas generosas, servidos fresquinhos no pote de 300ml.</p>
+    <p class="section-sub">Camadas de amor em cada colherada!</p>
     <div class="grid">
 
       <div class="card">
-        <span class="tag-destaque">Mais pedido</span>
-        <div class="card-art art-rosa">🍰</div>
+        <div class="card-art art-choc"><img src="imagem_produtos/brigadeiro.png" alt="Brigadeiro"></div>
         <div class="card-body">
-          <span class="card-title">Ninho com Nutella</span>
-          <span class="card-desc">Massa de leite ninho, recheio cremoso de Nutella e cobertura aveludada.</span>
+          <span class="card-title">Brigadeiro</span>
+          <span class="card-desc">Massa de chocolate fofinha, recheio de brigadeiro cremoso e granulado por cima.</span>
         </div>
         <div class="card-footer">
-          <span class="price-tag">R$ 14,90</span>
-          <button class="add-btn" aria-label="Adicionar Ninho com Nutella">+</button>
+          <span class="price-tag">R$ 7,00</span>
+          <button class="add-btn" aria-label="Adicionar Brigadeiro">+</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-art art-rosa">🍓</div>
+        <div class="card-art art-rosa"><img src="imagem_produtos/ninho-morango.png" alt="Ninho com morango"></div>
         <div class="card-body">
-          <span class="card-title">Red Velvet</span>
-          <span class="card-desc">Massa aveludada de cacau com recheio de cream cheese.</span>
+          <span class="card-title">Ninho com morango</span>
+          <span class="card-desc">Massa branca fofinha, creme de Ninho e geleia de morango com pedacinhos de fruta.</span>
         </div>
         <div class="card-footer">
-          <span class="price-tag">R$ 15,90</span>
-          <button class="add-btn" aria-label="Adicionar Red Velvet">+</button>
+          <span class="price-tag">R$ 7,00</span>
+          <button class="add-btn" aria-label="Adicionar Ninho com morango">+</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-art art-choc">🥥</div>
+        <div class="card-art art-rosa"><img src="imagem_produtos/red-velvet-ninho.png" alt="Red Velvet com Ninho"></div>
         <div class="card-body">
-          <span class="card-title">Prestígio</span>
-          <span class="card-desc">Chocolate meio amargo, coco fresco e recheio gelado.</span>
+          <span class="card-title">Red Velvet com Ninho</span>
+          <span class="card-desc">Massa Red Velvet fofinha com creme de Ninho, uma combinação perfeita e apaixonante!</span>
         </div>
         <div class="card-footer">
-          <span class="price-tag">R$ 13,90</span>
-          <button class="add-btn" aria-label="Adicionar Prestígio">+</button>
+          <span class="price-tag">R$ 7,00</span>
+          <button class="add-btn" aria-label="Adicionar Red Velvet com Ninho">+</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-art art-choc"><img src="imagem_produtos/beijinho-chocolate.png" alt="Beijinho com chocolate"></div>
+        <div class="card-body">
+          <span class="card-title">Beijinho com chocolate</span>
+          <span class="card-desc">Massa branca fofinha, recheio de beijinho cremoso e ganache de chocolate.</span>
+        </div>
+        <div class="card-footer">
+          <span class="price-tag">R$ 7,00</span>
+          <button class="add-btn" aria-label="Adicionar Beijinho com chocolate">+</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-art art-doce"><img src="imagem_produtos/maracuja.png" alt="Maracujá"></div>
+        <div class="card-body">
+          <span class="card-title">Maracujá</span>
+          <span class="card-desc">Massa branca fofinha, creme suave e geleia de maracujá com sementinhas.</span>
+        </div>
+        <div class="card-footer">
+          <span class="price-tag">R$ 7,00</span>
+          <button class="add-btn" aria-label="Adicionar Maracujá">+</button>
         </div>
       </div>
 
     </div>
   </section>
+
+  <!--
+  Categorias ocultas a pedido do cliente. O HTML foi mantido comentado
+  aqui embaixo para ser fácil reativar no futuro se precisar.
 
   <section class="menu-section" id="brownies">
     <div class="section-head">
@@ -941,11 +1140,13 @@
     </div>
   </section>
 
+  -->
+
 </main>
 </div>
 
 <footer>
-  <h3>Amora & Mel</h3>
+  <h3 class="brandname">artcake_<span class="script">cruz</span></h3>
   <div class="footer-info">
     Rua das Flores, 128 — Centro<br>
     Terça a domingo, das 10h às 20h<br>
@@ -976,6 +1177,8 @@
   <div class="cart-body" id="cartBody">
     <p class="cart-empty" id="cartEmpty">Seu carrinho está vazio.<br>Adicione alguns doces! 🍰</p>
     <div class="cart-items" id="cartItems"></div>
+
+    <div class="cart-savings-row" id="cartSavingsRow" hidden></div>
 
     <div class="cart-total-row" id="cartTotalRow" hidden>
       <span>Total</span>
@@ -1012,13 +1215,74 @@
       <label class="cart-label" for="custNotes">Observações (opcional)</label>
       <textarea class="cart-input" id="custNotes" placeholder="Ex: sem casquinha de chocolate, trocar recheio..." rows="2"></textarea>
 
+      <a href="login.html" class="login-prompt" id="loginPromptLink" style="display:none;">🔐 Faça login para salvar seus dados</a>
+
       <button type="submit" class="cart-submit">💬 Finalizar pedido no WhatsApp</button>
     </form>
   </div>
 </div>
 
+<div id="logoModal" class="logo-modal">
+  <button class="logo-modal-close" id="logoModalClose" aria-label="Fechar">✕</button>
+  <img src="imagem_logo/logo.png" alt="artcake_cruz" id="logoModalImg">
+</div>
+
 <script>
-  const CART_PHONE = '5598981046669';
+  const CART_PHONE = '5511912345678';
+
+  // ======================================================================
+  // CONFIGURAÇÃO DE PROMOÇÕES
+  // ------------------------------------------------------------------
+  // Para DESATIVAR uma promoção: troque "active" para false (ou apague o
+  // objeto inteiro). Para CRIAR uma nova promoção: copie o bloco { ... }
+  // abaixo, cole depois da vírgula e ajuste os valores.
+  // Quando não há nenhuma promoção com active:true, o banner some
+  // sozinho e o carrinho volta a cobrar o preço normal de cada item.
+  // ======================================================================
+  const PROMOTIONS = [
+    {
+      active: true,                 // true = promoção funcionando | false = desligada
+      category: 'bolos',            // precisa bater com o id da <section class="menu-section" id="...">
+      groupSize: 3,                 // quantas unidades formam o combo
+      groupPrice: 20,                // preço do combo, em reais (número, use ponto se tiver centavos)
+      badge: '🎉 Promoção de Estreia',
+      title: 'Leve 3 bolos no pote por',
+      priceHighlight: 'R$ 20',
+      sub: 'A cada 3 potes (pode misturar os sabores!) o preço fecha em R$20 — a partir do 4º, cada unidade extra sai por R$7,00.'
+    }
+  ];
+
+  function promoAtivaPara(categoria){
+    return PROMOTIONS.find(p => p.active && p.category === categoria) || null;
+  }
+
+  function renderPromoBanners(){
+    const container = document.getElementById('promoBanners');
+    if(!container) return;
+    const ativas = PROMOTIONS.filter(p => p.active);
+    container.innerHTML = ativas.map(p => `
+      <div class="promo-banner">
+        <span class="promo-badge">${p.badge}</span>
+        <p class="promo-title">${p.title} <strong>${p.priceHighlight}</strong></p>
+        <p class="promo-sub">${p.sub}</p>
+      </div>
+    `).join('');
+  }
+  renderPromoBanners();
+
+  // ---------- Modal da logo ----------
+  const logoTrigger = document.getElementById('logoTrigger');
+  const logoModal = document.getElementById('logoModal');
+  const logoModalClose = document.getElementById('logoModalClose');
+
+  logoTrigger.addEventListener('click', () => logoModal.classList.add('show'));
+  logoModalClose.addEventListener('click', () => logoModal.classList.remove('show'));
+  logoModal.addEventListener('click', (e) => {
+    if(e.target === logoModal) logoModal.classList.remove('show');
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') logoModal.classList.remove('show');
+  });
   let cart = {}; // { "Nome do produto": { price: 14.9, qty: 2 } }
 
   const cartFab = document.getElementById('cartFab');
@@ -1030,6 +1294,7 @@
   const cartItemsEl = document.getElementById('cartItems');
   const cartTotalRow = document.getElementById('cartTotalRow');
   const cartTotalEl = document.getElementById('cartTotal');
+  const cartSavingsRow = document.getElementById('cartSavingsRow');
   const cartForm = document.getElementById('cartForm');
 
   function parsePrice(text){
@@ -1038,6 +1303,37 @@
 
   function formatPrice(value){
     return 'R$ ' + value.toFixed(2).replace('.', ',');
+  }
+
+  // Calcula o total do carrinho já aplicando o desconto de combo,
+  // agrupando por categoria (ex: todos os "bolos" contam juntos,
+  // pode misturar sabores dentro do mesmo combo).
+  function computeCartTotals(cart){
+    const porCategoria = {};
+    Object.entries(cart).forEach(([itemName, item]) => {
+      const cat = item.category || '_sem_categoria';
+      if(!porCategoria[cat]) porCategoria[cat] = { qty: 0, normalTotal: 0 };
+      porCategoria[cat].qty += item.qty;
+      porCategoria[cat].normalTotal += item.price * item.qty;
+    });
+
+    let total = 0;
+    let normalTotal = 0;
+
+    Object.entries(porCategoria).forEach(([cat, info]) => {
+      normalTotal += info.normalTotal;
+      const promo = promoAtivaPara(cat);
+      if(promo){
+        const combos = Math.floor(info.qty / promo.groupSize);
+        const resto = info.qty - (combos * promo.groupSize);
+        const precoMedioUnidade = info.normalTotal / info.qty;
+        total += (combos * promo.groupPrice) + (resto * precoMedioUnidade);
+      } else {
+        total += info.normalTotal;
+      }
+    });
+
+    return { total, normalTotal, economia: normalTotal - total };
   }
 
   function updateBadge(){
@@ -1050,8 +1346,8 @@
     }
   }
 
-  function addToCart(name, price, btn){
-    if(!cart[name]) cart[name] = { price, qty: 0 };
+  function addToCart(name, price, category, btn){
+    if(!cart[name]) cart[name] = { price, qty: 0, category };
     cart[name].qty += 1;
     updateBadge();
     renderCart();
@@ -1078,6 +1374,7 @@
       cartEmpty.hidden = false;
       cartItemsEl.innerHTML = '';
       cartTotalRow.hidden = true;
+      cartSavingsRow.hidden = true;
       cartForm.hidden = true;
       return;
     }
@@ -1086,11 +1383,9 @@
     cartForm.hidden = false;
     cartTotalRow.hidden = false;
 
-    let total = 0;
     cartItemsEl.innerHTML = names.map(name => {
       const item = cart[name];
       const lineTotal = item.price * item.qty;
-      total += lineTotal;
       return `
         <div class="cart-item">
           <div class="cart-item-info">
@@ -1107,7 +1402,15 @@
       `;
     }).join('');
 
+    const { total, economia } = computeCartTotals(cart);
     cartTotalEl.textContent = formatPrice(total);
+
+    if(economia > 0.004){
+      cartSavingsRow.hidden = false;
+      cartSavingsRow.textContent = `🎉 Você está economizando ${formatPrice(economia)} com a promoção!`;
+    } else {
+      cartSavingsRow.hidden = true;
+    }
   }
 
   function openCart(){
@@ -1179,7 +1482,9 @@
       if(!card) return;
       const name = card.querySelector('.card-title').textContent.trim();
       const price = parsePrice(card.querySelector('.price-tag').textContent);
-      addToCart(name, price, btn);
+      const section = card.closest('.menu-section');
+      const category = section ? section.id : null;
+      addToCart(name, price, category, btn);
     });
   });
 
@@ -1199,17 +1504,20 @@
       return;
     }
 
-    let total = 0;
     let lines = Object.entries(cart).map(([itemName, item]) => {
       const lineTotal = item.price * item.qty;
-      total += lineTotal;
       return `${item.qty}x ${itemName} — ${formatPrice(lineTotal)}`;
     });
+
+    const { total, economia } = computeCartTotals(cart);
 
     const residenceLabel = residenceType === 'casa' ? 'Casa' : 'Apartamento';
 
     let message = 'Olá! Gostaria de fazer o seguinte pedido:\n\n';
     message += lines.join('\n');
+    if(economia > 0.004){
+      message += `\n\n🎉 Desconto de promoção: -${formatPrice(economia)}`;
+    }
     message += `\n\nTotal: ${formatPrice(total)}`;
     message += `\n\nNome: ${name}`;
     if(phone) message += `\nTelefone: ${phone}`;
@@ -1218,6 +1526,10 @@
     message += `\nNúmero: ${number}`;
     if(complement) message += `\nBloco/Andar: ${complement}`;
     if(notes) message += `\nObservações: ${notes}`;
+
+    if(window.__registerOrderCounts){
+      window.__registerOrderCounts(cart);
+    }
 
     const url = `https://wa.me/${CART_PHONE}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
@@ -1300,12 +1612,58 @@
 
 <script type="module">
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { doc, getDoc, setDoc, increment, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { auth, db } from "./firebase-config.js";
 
   const accountLink = document.getElementById('accountLink');
 
+  // ---------- Registrar quantas vezes cada item foi pedido ----------
+  window.__registerOrderCounts = async function(cartObj){
+    try{
+      const entries = Object.entries(cartObj);
+      await Promise.all(entries.map(([itemName, item]) =>
+        setDoc(doc(db, 'productStats', itemName), {
+          name: itemName,
+          count: increment(item.qty || 1)
+        }, { merge: true })
+      ));
+    } catch(err){
+      console.error('Não foi possível registrar a estatística de pedidos:', err);
+    }
+  };
+
+  // ---------- Buscar o item com mais pedidos e marcar a tag ----------
+  async function marcarMaisPedido(){
+    try{
+      const snap = await getDocs(collection(db, 'productStats'));
+      let top = null;
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        const count = data.count || 0;
+        if(count > 0 && (!top || count > top.count)){
+          top = { name: data.name || docSnap.id, count };
+        }
+      });
+      if(!top) return;
+
+      document.querySelectorAll('.card').forEach(card => {
+        const titleEl = card.querySelector('.card-title');
+        if(titleEl && titleEl.textContent.trim() === top.name && !card.querySelector('.tag-mais-pedido')){
+          const tag = document.createElement('span');
+          tag.className = 'tag-mais-pedido';
+          tag.textContent = 'Mais pedido';
+          card.insertBefore(tag, card.firstChild);
+        }
+      });
+    } catch(err){
+      console.error('Não foi possível carregar o item mais pedido:', err);
+    }
+  }
+  marcarMaisPedido();
+
   onAuthStateChanged(auth, async (user) => {
+    const loginPromptLink = document.getElementById('loginPromptLink');
+
     if(user){
       // Mostra iniciais/foto no ícone de conta e leva ao perfil ao clicar
       accountLink.title = user.displayName || user.email || 'Minha conta';
@@ -1315,6 +1673,8 @@
         const inicial = (user.displayName || user.email || '?').trim().charAt(0).toUpperCase();
         accountLink.textContent = inicial;
       }
+
+      if(loginPromptLink) loginPromptLink.style.display = 'none';
 
       try{
         const snap = await getDoc(doc(db, 'customers', user.uid));
@@ -1330,6 +1690,8 @@
       accountLink.textContent = '👤';
       accountLink.title = 'Entrar / minha conta';
       window.__customerProfile = null;
+
+      if(loginPromptLink) loginPromptLink.style.display = 'block';
     }
   });
 </script>
