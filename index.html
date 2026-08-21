@@ -69,6 +69,7 @@
     border-radius:50%;
     object-fit:cover;
     flex-shrink:0;
+    box-shadow: inset 0 0 0 3px var(--creme-2);
     cursor:pointer;
     transition:transform 0.15s ease;
   }
@@ -491,6 +492,32 @@
     border-radius:999px;
     box-shadow:0 4px 10px -4px rgba(0,0,0,0.25);
   }
+
+  .tag-esgotado{
+    position:absolute;
+    top:-8px;
+    left:14px;
+    background:var(--chocolate-suave);
+    color:#fff;
+    font-size:0.68rem;
+    font-weight:800;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:999px;
+    box-shadow:0 4px 10px -4px rgba(0,0,0,0.25);
+    z-index:2;
+  }
+  .card.sold-out .card-art img{ filter:grayscale(1); opacity:0.55; }
+  .card.sold-out .card-art{ opacity:0.85; }
+  .card.sold-out .card-title,
+  .card.sold-out .card-desc{ opacity:0.55; }
+  .card.sold-out .add-btn{
+    opacity:0.4;
+    cursor:not-allowed;
+    pointer-events:none;
+  }
+  .card.sold-out .price-tag{ opacity:0.55; }
 
   /* ---------- Rodapé ---------- */
   footer{
@@ -1228,7 +1255,7 @@
 </div>
 
 <script>
-  const CART_PHONE = '5598981046669';
+  const CART_PHONE = '5511912345678';
 
   // ======================================================================
   // CONFIGURAÇÃO DE PROMOÇÕES
@@ -1346,7 +1373,58 @@
     }
   }
 
+  // Atualiza a aparência dos cards (tag "Esgotado", botão desabilitado)
+  // com base no estoque atual vindo do Firestore (controlado pela tela
+  // de admin). Produto sem registro de estoque = considerado disponível
+  // (sem limite), até que o admin defina uma quantidade pra ele.
+  function refreshStockUI(){
+    document.querySelectorAll('.card').forEach(card => {
+      const titleEl = card.querySelector('.card-title');
+      if(!titleEl) return;
+      const name = titleEl.textContent.trim();
+      const remaining = (window.__stockRemaining && Object.prototype.hasOwnProperty.call(window.__stockRemaining, name))
+        ? window.__stockRemaining[name]
+        : null;
+      const addBtn = card.querySelector('.add-btn');
+      let tag = card.querySelector('.tag-esgotado');
+
+      if(remaining !== null && remaining <= 0){
+        card.classList.add('sold-out');
+        if(addBtn) addBtn.disabled = true;
+        if(!tag){
+          tag = document.createElement('span');
+          tag.className = 'tag-esgotado';
+          tag.textContent = 'Esgotado';
+          card.insertBefore(tag, card.firstChild);
+        }
+      } else {
+        card.classList.remove('sold-out');
+        if(addBtn) addBtn.disabled = false;
+        if(tag) tag.remove();
+      }
+    });
+  }
+  window.__refreshStockUI = refreshStockUI;
+  refreshStockUI();
+
+  // Estoque restante de um produto (null = sem controle, considera ilimitado)
+  function getRemainingStock(name){
+    if(window.__stockRemaining && Object.prototype.hasOwnProperty.call(window.__stockRemaining, name)){
+      return window.__stockRemaining[name];
+    }
+    return null;
+  }
+
   function addToCart(name, price, category, btn){
+    const remaining = getRemainingStock(name);
+    const jaNoCarrinho = (cart[name] && cart[name].qty) || 0;
+    if(remaining !== null && jaNoCarrinho >= remaining){
+      alert(remaining <= 0
+        ? 'Esse item está esgotado no momento.'
+        : `Só restam ${remaining} unidade(s) desse item.`);
+      return;
+    }
+
     if(!cart[name]) cart[name] = { price, qty: 0, category };
     cart[name].qty += 1;
     updateBadge();
@@ -1362,6 +1440,17 @@
 
   function changeQty(name, delta){
     if(!cart[name]) return;
+
+    if(delta > 0){
+      const remaining = getRemainingStock(name);
+      if(remaining !== null && cart[name].qty >= remaining){
+        alert(remaining <= 0
+          ? 'Esse item está esgotado no momento.'
+          : `Só restam ${remaining} unidade(s) desse item.`);
+        return;
+      }
+    }
+
     cart[name].qty += delta;
     if(cart[name].qty <= 0) delete cart[name];
     updateBadge();
@@ -1612,21 +1701,37 @@
 
 <script type="module">
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { doc, getDoc, setDoc, increment, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { doc, getDoc, setDoc, increment, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { auth, db } from "./firebase-config.js";
 
   const accountLink = document.getElementById('accountLink');
 
   // ---------- Registrar quantas vezes cada item foi pedido ----------
+  // e descontar do estoque (só pros produtos que têm controle de
+  // estoque ativo, ou seja, que já têm documento em productStock).
   window.__registerOrderCounts = async function(cartObj){
     try{
       const entries = Object.entries(cartObj);
-      await Promise.all(entries.map(([itemName, item]) =>
-        setDoc(doc(db, 'productStats', itemName), {
-          name: itemName,
-          count: increment(item.qty || 1)
-        }, { merge: true })
-      ));
+      await Promise.all(entries.map(([itemName, item]) => {
+        const promessas = [
+          setDoc(doc(db, 'productStats', itemName), {
+            name: itemName,
+            count: increment(item.qty || 1)
+          }, { merge: true })
+        ];
+
+        const temControleDeEstoque = window.__stockRemaining
+          && Object.prototype.hasOwnProperty.call(window.__stockRemaining, itemName);
+        if(temControleDeEstoque){
+          promessas.push(
+            setDoc(doc(db, 'productStock', itemName), {
+              remaining: increment(-(item.qty || 1))
+            }, { merge: true })
+          );
+        }
+
+        return Promise.all(promessas);
+      }));
     } catch(err){
       console.error('Não foi possível registrar a estatística de pedidos:', err);
     }
@@ -1660,6 +1765,29 @@
     }
   }
   marcarMaisPedido();
+
+  // ---------- Monitorar estoque em tempo real ----------
+  // Lê a coleção "productStock" (controlada pela tela admin.html).
+  // Cada documento tem o id igual ao nome do produto e um campo
+  // "remaining" com a quantidade disponível agora. Produto sem
+  // documento ali = sem controle de estoque (venda ilimitada).
+  document.querySelectorAll('.card').forEach(card => {
+    const titleEl = card.querySelector('.card-title');
+    if(!titleEl) return;
+    const name = titleEl.textContent.trim();
+
+    onSnapshot(doc(db, 'productStock', name), (snap) => {
+      window.__stockRemaining = window.__stockRemaining || {};
+      if(snap.exists()){
+        window.__stockRemaining[name] = snap.data().remaining ?? null;
+      } else {
+        delete window.__stockRemaining[name];
+      }
+      if(window.__refreshStockUI) window.__refreshStockUI();
+    }, (err) => {
+      console.error('Não foi possível monitorar o estoque de', name, err);
+    });
+  });
 
   onAuthStateChanged(auth, async (user) => {
     const loginPromptLink = document.getElementById('loginPromptLink');
