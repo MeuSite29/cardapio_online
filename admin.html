@@ -484,11 +484,11 @@
         adminScreen.style.display = 'block';
         montarPainel();
       } else {
-        showMsg(loginMsg, 'Essa conta não tem permissão de administrador.');
+        showMsg(loginMsg, `Essa conta não tem permissão de administrador. (e-mail: ${user.email || '—'} | UID: ${user.uid})`);
         await signOut(auth);
       }
     } catch(err){
-      showMsg(loginMsg, 'Erro ao verificar permissão. Tente novamente.');
+      showMsg(loginMsg, `Erro ao verificar permissão: ${err.message}`);
       await signOut(auth);
     }
   });
