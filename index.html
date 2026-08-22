@@ -749,12 +749,15 @@
   .cart-form{ display:flex; flex-direction:column; gap:6px; margin-top:14px; }
   .cart-form[hidden]{ display:none; }
   .cart-label{
+    display:block;
     font-size:0.8rem;
     font-weight:700;
     color:var(--chocolate-suave);
     margin-top:8px;
   }
   .cart-input{
+    display:block;
+    width:100%;
     font-family:'Plus Jakarta Sans', sans-serif;
     font-size:0.92rem;
     padding:11px 14px;
@@ -765,6 +768,71 @@
     resize:vertical;
   }
   .cart-input:focus{ outline:none; border-color:var(--framboesa); }
+
+  /* ---------- Abas Retirar no local / Entrega ---------- */
+  .delivery-tabs{
+    display:flex;
+    background:var(--creme);
+    border-radius:999px;
+    padding:4px;
+    margin-bottom:6px;
+  }
+  .delivery-tab{
+    flex:1;
+    text-align:center;
+    padding:10px 6px;
+    border-radius:999px;
+    border:none;
+    background:transparent;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight:700;
+    font-size:0.82rem;
+    color:var(--chocolate-suave);
+    cursor:pointer;
+    -webkit-appearance:none;
+  }
+  .delivery-tab.active{ background:var(--framboesa); color:#fff; }
+
+  .pickup-address-box{
+    background:var(--creme-2);
+    border:1.5px solid rgba(59,42,42,0.1);
+    border-radius:14px;
+    padding:16px;
+    margin-top:10px;
+  }
+  .pickup-address-title{
+    font-weight:700;
+    font-size:0.85rem;
+    margin-bottom:4px;
+  }
+  .pickup-address-text{
+    font-size:0.94rem;
+    margin-bottom:2px;
+  }
+  .pickup-hours{
+    font-size:0.8rem;
+    color:var(--chocolate-suave);
+    margin-bottom:12px;
+  }
+  .pickup-map{
+    border-radius:12px;
+    overflow:hidden;
+    margin-bottom:10px;
+    border:1px solid rgba(59,42,42,0.1);
+  }
+  .pickup-map iframe{
+    width:100%;
+    height:180px;
+    border:0;
+    display:block;
+  }
+  .pickup-map-link{
+    display:inline-block;
+    font-size:0.82rem;
+    font-weight:700;
+    color:var(--framboesa);
+  }
+  .pickup-map-link:hover{ text-decoration:underline; }
 
   .login-prompt{
     display:block;
@@ -1213,30 +1281,55 @@
     </div>
 
     <form class="cart-form" id="cartForm" hidden>
+      <div class="delivery-tabs">
+        <button type="button" class="delivery-tab active" id="tabPickup" data-mode="retirada">🏠 Retirar no local</button>
+        <button type="button" class="delivery-tab" id="tabDelivery" data-mode="entrega">🚚 Entrega</button>
+      </div>
+
       <label class="cart-label" for="custName">Nome</label>
       <input class="cart-input" id="custName" type="text" placeholder="Seu nome" required>
 
       <label class="cart-label" for="custPhone">Telefone (opcional)</label>
       <input class="cart-input" id="custPhone" type="tel" placeholder="(11) 91234-5678">
 
-      <label class="cart-label" for="custAddress">Endereço para entrega</label>
-      <textarea class="cart-input" id="custAddress" placeholder="Rua, bairro, referência" rows="2" required></textarea>
-
-      <label class="cart-label" for="custResidenceType">Tipo de moradia</label>
-      <select class="cart-input" id="custResidenceType" required>
-        <option value="" disabled selected>Selecione...</option>
-        <option value="casa">Casa</option>
-        <option value="apartamento">Apartamento</option>
-      </select>
-
-      <div id="custNumberWrap" style="display:none;">
-        <label class="cart-label" id="custNumberLabel" for="custNumber">Número</label>
-        <input class="cart-input" id="custNumber" type="text" placeholder="">
+      <!-- ---------- Retirar no local ---------- -->
+      <div id="pickupInfo">
+        <div class="pickup-address-box">
+          <p class="pickup-address-title">📍 Endereço para retirada</p>
+          <p class="pickup-address-text">Rua das Flores, 128 — Centro</p>
+          <p class="pickup-hours">Terça a domingo, das 10h às 20h</p>
+          <div class="pickup-map">
+            <iframe
+              src="https://www.google.com/maps?q=Rua+das+Flores,+128+-+Centro&output=embed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Mapa da loja"></iframe>
+          </div>
+          <a class="pickup-map-link" href="https://www.google.com/maps/search/?api=1&query=Rua+das+Flores,+128+-+Centro" target="_blank">Abrir no Google Maps ↗</a>
+        </div>
       </div>
 
-      <div id="custComplementWrap" style="display:none;">
-        <label class="cart-label" for="custComplement">Bloco / Andar (opcional)</label>
-        <input class="cart-input" id="custComplement" type="text" placeholder="Ex: Bloco B, 4º andar">
+      <!-- ---------- Entrega ---------- -->
+      <div id="deliveryInfo" style="display:none;">
+        <label class="cart-label" for="custAddress">Endereço para entrega</label>
+        <textarea class="cart-input" id="custAddress" placeholder="Rua, bairro, referência" rows="2"></textarea>
+
+        <label class="cart-label" for="custResidenceType">Tipo de moradia</label>
+        <select class="cart-input" id="custResidenceType">
+          <option value="" disabled selected>Selecione...</option>
+          <option value="casa">Casa</option>
+          <option value="apartamento">Apartamento</option>
+        </select>
+
+        <div id="custNumberWrap" style="display:none;">
+          <label class="cart-label" id="custNumberLabel" for="custNumber">Número</label>
+          <input class="cart-input" id="custNumber" type="text" placeholder="">
+        </div>
+
+        <div id="custComplementWrap" style="display:none;">
+          <label class="cart-label" for="custComplement">Bloco / Andar (opcional)</label>
+          <input class="cart-input" id="custComplement" type="text" placeholder="Ex: Bloco B, 4º andar">
+        </div>
       </div>
 
       <label class="cart-label" for="custNotes">Observações (opcional)</label>
@@ -1538,6 +1631,7 @@
   cartFab.addEventListener('click', openCart);
 
   const custResidenceType = document.getElementById('custResidenceType');
+  const custAddress = document.getElementById('custAddress');
   const custNumberWrap = document.getElementById('custNumberWrap');
   const custNumberLabel = document.getElementById('custNumberLabel');
   const custNumber = document.getElementById('custNumber');
@@ -1562,6 +1656,40 @@
       custNumber.required = false;
     }
   });
+
+  // ---------- Retirar no local x Entrega ----------
+  let deliveryMode = 'retirada';
+  const tabPickup = document.getElementById('tabPickup');
+  const tabDelivery = document.getElementById('tabDelivery');
+  const pickupInfo = document.getElementById('pickupInfo');
+  const deliveryInfo = document.getElementById('deliveryInfo');
+
+  function setDeliveryMode(mode){
+    deliveryMode = mode;
+    const isEntrega = mode === 'entrega';
+
+    tabPickup.classList.toggle('active', !isEntrega);
+    tabDelivery.classList.toggle('active', isEntrega);
+    pickupInfo.style.display = isEntrega ? 'none' : 'block';
+    deliveryInfo.style.display = isEntrega ? 'block' : 'none';
+
+    // Os campos de entrega só são obrigatórios quando essa aba está ativa
+    custAddress.required = isEntrega;
+    custResidenceType.required = isEntrega;
+    if(!isEntrega){
+      custNumber.required = false;
+      custComplementWrap.style.display = 'none';
+      custNumberWrap.style.display = 'none';
+    } else {
+      // reaplica a obrigatoriedade do número conforme o tipo de moradia já escolhido
+      custResidenceType.dispatchEvent(new Event('change'));
+    }
+  }
+
+  tabPickup.addEventListener('click', () => setDeliveryMode('retirada'));
+  tabDelivery.addEventListener('click', () => setDeliveryMode('entrega'));
+  setDeliveryMode('retirada');
+
   cartClose.addEventListener('click', closeCart);
   cartOverlay.addEventListener('click', closeCart);
 
@@ -1582,15 +1710,26 @@
 
     const name = document.getElementById('custName').value.trim();
     const phone = document.getElementById('custPhone').value.trim();
-    const address = document.getElementById('custAddress').value.trim();
-    const residenceType = document.getElementById('custResidenceType').value;
-    const number = document.getElementById('custNumber').value.trim();
-    const complement = document.getElementById('custComplement').value.trim();
     const notes = document.getElementById('custNotes').value.trim();
 
-    if(!name || !address || !residenceType || !number){
-      alert('Preencha seu nome, o endereço, o tipo de moradia e o número para entrega.');
+    if(!name){
+      alert('Preencha seu nome.');
       return;
+    }
+
+    let address, residenceType, number, complement, residenceLabel;
+
+    if(deliveryMode === 'entrega'){
+      address = document.getElementById('custAddress').value.trim();
+      residenceType = document.getElementById('custResidenceType').value;
+      number = document.getElementById('custNumber').value.trim();
+      complement = document.getElementById('custComplement').value.trim();
+
+      if(!address || !residenceType || !number){
+        alert('Preencha o endereço, o tipo de moradia e o número para entrega.');
+        return;
+      }
+      residenceLabel = residenceType === 'casa' ? 'Casa' : 'Apartamento';
     }
 
     let lines = Object.entries(cart).map(([itemName, item]) => {
@@ -1600,8 +1739,6 @@
 
     const { total, economia } = computeCartTotals(cart);
 
-    const residenceLabel = residenceType === 'casa' ? 'Casa' : 'Apartamento';
-
     let message = 'Olá! Gostaria de fazer o seguinte pedido:\n\n';
     message += lines.join('\n');
     if(economia > 0.004){
@@ -1610,10 +1747,18 @@
     message += `\n\nTotal: ${formatPrice(total)}`;
     message += `\n\nNome: ${name}`;
     if(phone) message += `\nTelefone: ${phone}`;
-    message += `\nEndereço: ${address}`;
-    message += `\nTipo de moradia: ${residenceLabel}`;
-    message += `\nNúmero: ${number}`;
-    if(complement) message += `\nBloco/Andar: ${complement}`;
+
+    if(deliveryMode === 'entrega'){
+      message += `\n\nForma de recebimento: Entrega`;
+      message += `\nEndereço: ${address}`;
+      message += `\nTipo de moradia: ${residenceLabel}`;
+      message += `\nNúmero: ${number}`;
+      if(complement) message += `\nBloco/Andar: ${complement}`;
+    } else {
+      message += `\n\nForma de recebimento: Retirada no local`;
+      message += `\nEndereço da loja: Rua das Flores, 128 — Centro`;
+    }
+
     if(notes) message += `\nObservações: ${notes}`;
 
     if(window.__registerOrderCounts){
