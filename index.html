@@ -312,7 +312,7 @@
   /* ---------- Navegação de categorias ---------- */
   .cat-nav{
     position:sticky;
-    top:63px;
+    top:var(--topbar-height, 63px);
     z-index:40;
     background:var(--creme);
     padding:8px 0 6px;
@@ -863,7 +863,7 @@
   }
 
   @media (min-width:640px){
-    .cat-nav{ top:66px; }
+    .cat-nav{ top:var(--topbar-height, 66px); }
   }
 
   /* ---------- Telas grandes (tablet paisagem / desktop) ---------- */
@@ -916,7 +916,7 @@
 
     .cat-nav{
       position:sticky;
-      top:96px;
+      top:calc(var(--topbar-height, 89px) + 16px);
       width:220px;
       flex-shrink:0;
       background:transparent;
@@ -1346,6 +1346,23 @@
 </div>
 
 <script>
+  // Mede a altura real do cabeçalho fixo e guarda numa variável CSS, pra
+  // que a barra de categorias (sticky) nunca fique escondida embaixo dele,
+  // mesmo que o cabeçalho mude de altura (logo maior, texto quebrando
+  // em 2 linhas, tela pequena etc.)
+  function ajustarAlturaTopbar(){
+    const topbar = document.querySelector('.topbar');
+    if(topbar){
+      document.documentElement.style.setProperty('--topbar-height', topbar.offsetHeight + 'px');
+    }
+  }
+  ajustarAlturaTopbar();
+  window.addEventListener('resize', ajustarAlturaTopbar);
+  window.addEventListener('load', ajustarAlturaTopbar);
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(ajustarAlturaTopbar);
+  }
+
   const CART_PHONE = '5511912345678';
 
   // ======================================================================
